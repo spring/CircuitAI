@@ -402,6 +402,9 @@ IUnitTask* CMilitaryManager::MakeTask(CCircuitUnit* unit)
 				task = candidate;
 				break;
 			}
+			if (task != nullptr) {
+				break;
+			}
 		}
 	}
 	// FIXME: COMPATIBILITY
