@@ -18,9 +18,16 @@
 
 namespace circuit {
 
+// FIXME: Yopta DEBUG
+class CCircuitAI;
+// FIXME: Yopta DEBUG
+
 class CScheduler {
 public:
-	CScheduler();
+	// FIXME: Yopta DEBUG
+	CScheduler(CCircuitAI* ai);
+	// FIXME: Yopta DEBUG
+//	CScheduler();
 	virtual ~CScheduler();
 
 	void Init(const std::shared_ptr<CScheduler>& thisPtr) { self = thisPtr; }
@@ -72,6 +79,9 @@ public:
 	}
 
 private:
+	// FIXME: Yopta DEBUG
+	CCircuitAI* ai;
+	// FIXME: Yopta DEBUG
 	std::weak_ptr<CScheduler> self;
 	int lastFrame;
 	bool isProcessing;

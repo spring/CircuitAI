@@ -514,8 +514,8 @@ void CTerrainData::Init(CCircuitAI* circuit)
 		}
 	}
 
-	scheduler->RunTaskEvery(std::make_shared<CGameTask>(&CTerrainData::CheckHeightMap, this), FRAMES_PER_SEC * 20);
-	scheduler->RunOnRelease(std::make_shared<CGameTask>(&CTerrainData::DelegateAuthority, this, circuit));
+	scheduler->RunTaskEvery(std::make_shared<CGameTask>("CTerrainData::CheckHeightMap", &CTerrainData::CheckHeightMap, this), FRAMES_PER_SEC * 20);
+	scheduler->RunOnRelease(std::make_shared<CGameTask>("CTerrainData::DelegateAuthority", &CTerrainData::DelegateAuthority, this, circuit));
 
 #ifdef DEBUG_VIS
 	debugDrawer = circuit->GetDebugDrawer();
@@ -602,9 +602,9 @@ void CTerrainData::DelegateAuthority(CCircuitAI* curOwner)
 		if (circuit->IsInitialized() && (circuit != curOwner)) {
 			map = circuit->GetMap();
 			scheduler = circuit->GetScheduler();
-			scheduler->RunTaskEvery(std::make_shared<CGameTask>(&CTerrainData::CheckHeightMap, this), FRAMES_PER_SEC * 20);
-			scheduler->RunTaskAfter(std::make_shared<CGameTask>(&CTerrainData::CheckHeightMap, this), FRAMES_PER_SEC);
-			scheduler->RunOnRelease(std::make_shared<CGameTask>(&CTerrainData::DelegateAuthority, this, circuit));
+			scheduler->RunTaskEvery(std::make_shared<CGameTask>("CTerrainData::CheckHeightMap", &CTerrainData::CheckHeightMap, this), FRAMES_PER_SEC * 20);
+			scheduler->RunTaskAfter(std::make_shared<CGameTask>("CTerrainData::CheckHeightMap", &CTerrainData::CheckHeightMap, this), FRAMES_PER_SEC);
+			scheduler->RunOnRelease(std::make_shared<CGameTask>("CTerrainData::DelegateAuthority", &CTerrainData::DelegateAuthority, this, circuit));
 			break;
 		}
 	}
@@ -619,8 +619,8 @@ void CTerrainData::CheckHeightMap()
 	std::vector<float>& heightMap = (pHeightMap.load() == &heightMap0) ? heightMap1 : heightMap0;
 	heightMap = std::move(map->GetHeightMap());
 	slopeMap = std::move(map->GetSlopeMap());
-	scheduler->RunParallelTask(std::make_shared<CGameTask>(&CTerrainData::UpdateAreas, this),
-							   std::make_shared<CGameTask>(&CTerrainData::ScheduleUsersUpdate, this));
+	scheduler->RunParallelTask(std::make_shared<CGameTask>("CTerrainData::UpdateAreas", &CTerrainData::UpdateAreas, this),
+							   std::make_shared<CGameTask>("CTerrainData::ScheduleUsersUpdate", &CTerrainData::ScheduleUsersUpdate, this));
 }
 
 void CTerrainData::UpdateAreas()
@@ -895,7 +895,7 @@ void CTerrainData::ScheduleUsersUpdate()
 	aiToUpdate = 0;
 	for (auto circuit : gameAttribute->GetCircuits()) {
 		if (circuit->IsInitialized()) {
-			circuit->GetScheduler()->RunTaskAfter(std::make_shared<CGameTask>(&CTerrainManager::UpdateAreaUsers, circuit->GetTerrainManager()), ++aiToUpdate);
+			circuit->GetScheduler()->RunTaskAfter(std::make_shared<CGameTask>("CTerrainManager::UpdateAreaUsers", &CTerrainManager::UpdateAreaUsers, circuit->GetTerrainManager()), ++aiToUpdate);
 			circuit->GetPathfinder()->SetUpdated(false);
 		}
 	}

@@ -50,10 +50,10 @@ CMilitaryManager::CMilitaryManager(CCircuitAI* circuit)
 		, metalArmy(.0f)
 {
 	CScheduler* scheduler = circuit->GetScheduler().get();
-	scheduler->RunTaskEvery(std::make_shared<CGameTask>(&CMilitaryManager::Watchdog, this),
+	scheduler->RunTaskEvery(std::make_shared<CGameTask>("CMilitaryManager::Watchdog", &CMilitaryManager::Watchdog, this),
 							FRAMES_PER_SEC * 60,
 							circuit->GetSkirmishAIId() * WATCHDOG_COUNT + 12);
-	scheduler->RunTaskAt(std::make_shared<CGameTask>(&CMilitaryManager::Init, this));
+	scheduler->RunTaskAt(std::make_shared<CGameTask>("CMilitaryManager::Init", &CMilitaryManager::Init, this));
 
 	CCircuitDef::Id unitDefId;
 	/*
@@ -835,9 +835,9 @@ void CMilitaryManager::Init()
 	CScheduler* scheduler = circuit->GetScheduler().get();
 	const int interval = 4;
 	const int offset = circuit->GetSkirmishAIId() % interval;
-	scheduler->RunTaskEvery(std::make_shared<CGameTask>(&CMilitaryManager::UpdateIdle, this), interval, offset + 0);
-	scheduler->RunTaskEvery(std::make_shared<CGameTask>(&CMilitaryManager::UpdateFight, this), interval / 2, offset + 1);
-	scheduler->RunTaskEvery(std::make_shared<CGameTask>(&CMilitaryManager::UpdateRetreat, this), interval, offset + 2);
+	scheduler->RunTaskEvery(std::make_shared<CGameTask>("CMilitaryManager::UpdateIdle", &CMilitaryManager::UpdateIdle, this), interval, offset + 0);
+	scheduler->RunTaskEvery(std::make_shared<CGameTask>("CMilitaryManager::UpdateFight", &CMilitaryManager::UpdateFight, this), interval / 2, offset + 1);
+	scheduler->RunTaskEvery(std::make_shared<CGameTask>("CMilitaryManager::UpdateRetreat", &CMilitaryManager::UpdateRetreat, this), interval, offset + 2);
 }
 
 void CMilitaryManager::Watchdog()

@@ -8,7 +8,7 @@ set(additionalLibraries    ${Cpp_AIWRAPPER_TARGET} CUtils)
 #set(additionalCompileFlags "-Isrc/lib/ -Isrc/circuit/ -O1 -DDEBUG -DDEBUG_VIS -DDEBUG_LOG -Wall -Wextra -D_GLIBCXX_USE_CXX11_ABI=0")
 # Spring 100.0 was compiled with old ABI
 if ("${CMAKE_SYSTEM}" MATCHES "ARCH")
-	set(additionalCompileFlags "-DDEBUG_VIS -Wall -D_GLIBCXX_USE_CXX11_ABI=1")
+	set(additionalCompileFlags "-DDEBUG_LOG -Wall -D_GLIBCXX_USE_CXX11_ABI=1")
 else ()
 	set(additionalCompileFlags "-Wall -D_GLIBCXX_USE_CXX11_ABI=0")
 endif ()

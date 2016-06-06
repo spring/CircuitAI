@@ -81,7 +81,7 @@ CEnergyGrid::CEnergyGrid(CCircuitAI* circuit)
 		, toggleFrame(-1)
 #endif
 {
-	circuit->GetScheduler()->RunTaskAt(std::make_shared<CGameTask>(&CEnergyGrid::Init, this));
+	circuit->GetScheduler()->RunTaskAt(std::make_shared<CGameTask>("CEnergyGrid::Init", &CEnergyGrid::Init, this));
 }
 
 CEnergyGrid::~CEnergyGrid()

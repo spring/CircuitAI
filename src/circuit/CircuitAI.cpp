@@ -400,7 +400,10 @@ int CCircuitAI::Init(int skirmishAIId, const struct SSkirmishAICallback* sAICall
 #endif
 
 	CreateGameAttribute();
-	scheduler = std::make_shared<CScheduler>();
+	// FIXME: Yopta DEBUG
+	scheduler = std::make_shared<CScheduler>(this);
+	// FIXME: Yopta DEBUG
+//	scheduler = std::make_shared<CScheduler>();
 	scheduler->Init(scheduler);
 
 	std::string cfgName = InitOptions();
@@ -445,7 +448,7 @@ int CCircuitAI::Init(int skirmishAIId, const struct SSkirmishAICallback* sAICall
 
 	threatMap = std::make_shared<CThreatMap>(this);
 	const int offset = skirmishAIId % FRAMES_PER_SEC;
-	scheduler->RunTaskEvery(std::make_shared<CGameTask>(&CCircuitAI::UpdateEnemyUnits, this), FRAMES_PER_SEC, offset);
+	scheduler->RunTaskEvery(std::make_shared<CGameTask>("CCircuitAI::UpdateEnemyUnits", &CCircuitAI::UpdateEnemyUnits, this), FRAMES_PER_SEC, offset);
 
 	if (difficulty == Difficulty::HARD) {
 		Cheats* cheats = callback->GetCheats();

@@ -50,10 +50,10 @@ CBuilderManager::CBuilderManager(CCircuitAI* circuit)
 		, miscUpdateSlice(0)
 {
 	CScheduler* scheduler = circuit->GetScheduler().get();
-	scheduler->RunTaskEvery(std::make_shared<CGameTask>(&CBuilderManager::Watchdog, this),
+	scheduler->RunTaskEvery(std::make_shared<CGameTask>("CBuilderManager::Watchdog", &CBuilderManager::Watchdog, this),
 							FRAMES_PER_SEC * 60,
 							circuit->GetSkirmishAIId() * WATCHDOG_COUNT + 10);
-	scheduler->RunTaskAt(std::make_shared<CGameTask>(&CBuilderManager::Init, this));
+	scheduler->RunTaskAt(std::make_shared<CGameTask>("CBuilderManager::Init", &CBuilderManager::Init, this));
 
 	/*
 	 * worker handlers
@@ -179,7 +179,7 @@ CBuilderManager::CBuilderManager(CCircuitAI* circuit)
 			return;
 		}
 		// Check mex position in 20 seconds
-		this->circuit->GetScheduler()->RunTaskAfter(std::make_shared<CGameTask>([this, mexDef, pos, index]() {
+		this->circuit->GetScheduler()->RunTaskAfter(std::make_shared<CGameTask>("mex_destroyed_20", [this, mexDef, pos, index]() {
 			if (this->circuit->GetMetalManager()->IsOpenSpot(index) &&
 				this->circuit->GetBuilderManager()->IsBuilderInArea(mexDef, pos) &&
 				this->circuit->GetTerrainManager()->CanBeBuiltAt(mexDef, pos))
@@ -650,9 +650,9 @@ void CBuilderManager::Init()
 	CScheduler* scheduler = circuit->GetScheduler().get();
 	const int interval = 8;
 	const int offset = circuit->GetSkirmishAIId() % interval;
-	scheduler->RunTaskEvery(std::make_shared<CGameTask>(&CBuilderManager::UpdateIdle, this), interval, offset + 0);
-	scheduler->RunTaskEvery(std::make_shared<CGameTask>(&CBuilderManager::UpdateMisc, this), interval, offset + 1);
-	scheduler->RunTaskEvery(std::make_shared<CGameTask>(&CBuilderManager::UpdateBuild, this), interval, offset + 2);
+	scheduler->RunTaskEvery(std::make_shared<CGameTask>("CBuilderManager::UpdateIdle", &CBuilderManager::UpdateIdle, this), interval, offset + 0);
+	scheduler->RunTaskEvery(std::make_shared<CGameTask>("CBuilderManager::UpdateMisc", &CBuilderManager::UpdateMisc, this), interval, offset + 1);
+	scheduler->RunTaskEvery(std::make_shared<CGameTask>("CBuilderManager::UpdateBuild", &CBuilderManager::UpdateBuild, this), interval, offset + 2);
 }
 
 IBuilderTask* CBuilderManager::CreateBuilderTask(const AIFloat3& position, CCircuitUnit* unit)

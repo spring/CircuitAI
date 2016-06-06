@@ -42,7 +42,7 @@ CSetupManager::CSetupManager(CCircuitAI* circuit, CSetupData* setupData)
 		setupData->ParseSetupScript(circuit, setupScript);
 	}
 	DisabledUnits(setupScript);
-	circuit->GetScheduler()->RunTaskAt(std::make_shared<CGameTask>(&CSetupManager::FindCommander, this));
+	circuit->GetScheduler()->RunTaskAt(std::make_shared<CGameTask>("CSetupManager::FindCommander", &CSetupManager::FindCommander, this));
 }
 
 CSetupManager::~CSetupManager()

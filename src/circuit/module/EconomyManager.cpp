@@ -63,8 +63,8 @@ CEconomyManager::CEconomyManager(CCircuitAI* circuit)
 	//       https://ru.wikipedia.org/wiki/Марковский_процесс_принятия_решений
 
 	CScheduler* scheduler = circuit->GetScheduler().get();
-	scheduler->RunTaskEvery(std::make_shared<CGameTask>(&CEconomyManager::UpdateResourceIncome, this), TEAM_SLOWUPDATE_RATE);
-	scheduler->RunTaskAt(std::make_shared<CGameTask>(&CEconomyManager::Init, this));
+	scheduler->RunTaskEvery(std::make_shared<CGameTask>("CEconomyManager::UpdateResourceIncome", &CEconomyManager::UpdateResourceIncome, this), TEAM_SLOWUPDATE_RATE);
+	scheduler->RunTaskAt(std::make_shared<CGameTask>("CEconomyManager::Init", &CEconomyManager::Init, this));
 
 	/*
 	 * factory handlers
@@ -755,7 +755,7 @@ void CEconomyManager::AddMorphee(CCircuitUnit* unit)
 {
 	morphees.insert(unit);
 	if (morph == nullptr) {
-		morph = std::make_shared<CGameTask>(&CEconomyManager::UpdateMorph, this);
+		morph = std::make_shared<CGameTask>("CEconomyManager::UpdateMorph", &CEconomyManager::UpdateMorph, this);
 		circuit->GetScheduler()->RunTaskEvery(morph, FRAMES_PER_SEC * 10);
 	}
 }
@@ -876,7 +876,7 @@ void CEconomyManager::Init()
 				}
 			}
 
-			scheduler->RunTaskAt(std::make_shared<CGameTask>([this, buildPos]() {
+			scheduler->RunTaskAt(std::make_shared<CGameTask>("CEconomyManager_hardcode_init", [this, buildPos]() {
 				// Force commander level 0 to morph
 				CCircuitUnit* commander = circuit->GetSetupManager()->GetCommander();
 				if (commander != nullptr) {
@@ -900,12 +900,12 @@ void CEconomyManager::Init()
 		SkirmishAIs* ais = circuit->GetCallback()->GetSkirmishAIs();
 		const int interval = ais->GetSize() * FRAMES_PER_SEC;
 		delete ais;
-		scheduler->RunTaskEvery(std::make_shared<CGameTask>(static_cast<IBuilderTask* (CEconomyManager::*)(void)>(&CEconomyManager::UpdateFactoryTasks), this),
+		scheduler->RunTaskEvery(std::make_shared<CGameTask>("CEconomyManager::UpdateFactoryTasks", static_cast<IBuilderTask* (CEconomyManager::*)(void)>(&CEconomyManager::UpdateFactoryTasks), this),
 								interval, circuit->GetSkirmishAIId() + 0 + 10 * interval);
-		scheduler->RunTaskEvery(std::make_shared<CGameTask>(&CEconomyManager::UpdateStorageTasks, this), interval, circuit->GetSkirmishAIId() + 1);
+		scheduler->RunTaskEvery(std::make_shared<CGameTask>("CEconomyManager::UpdateStorageTasks", &CEconomyManager::UpdateStorageTasks, this), interval, circuit->GetSkirmishAIId() + 1);
 	};
 	// Try to avoid blocked factories on start
-	circuit->GetScheduler()->RunTaskAfter(std::make_shared<CGameTask>(subinit), circuit->GetSkirmishAIId() * 2);
+	circuit->GetScheduler()->RunTaskAfter(std::make_shared<CGameTask>("CEconomyManager_subinit", subinit), circuit->GetSkirmishAIId() * 2);
 }
 
 void CEconomyManager::UpdateEconomy()

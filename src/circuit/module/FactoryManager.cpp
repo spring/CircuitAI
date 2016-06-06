@@ -37,13 +37,13 @@ CFactoryManager::CFactoryManager(CCircuitAI* circuit)
 		, assistDef(nullptr)
 {
 	CScheduler* scheduler = circuit->GetScheduler().get();
-	scheduler->RunTaskEvery(std::make_shared<CGameTask>(&CFactoryManager::Watchdog, this),
+	scheduler->RunTaskEvery(std::make_shared<CGameTask>("CFactoryManager::Watchdog", &CFactoryManager::Watchdog, this),
 							FRAMES_PER_SEC * 60,
 							circuit->GetSkirmishAIId() * WATCHDOG_COUNT + 11);
 	const int interval = 4;
 	const int offset = circuit->GetSkirmishAIId() % interval;
-	scheduler->RunTaskEvery(std::make_shared<CGameTask>(&CFactoryManager::UpdateIdle, this), interval, offset + 0);
-	scheduler->RunTaskEvery(std::make_shared<CGameTask>(&CFactoryManager::UpdateAssist, this), interval, offset + 2);
+	scheduler->RunTaskEvery(std::make_shared<CGameTask>("CFactoryManager::UpdateIdle", &CFactoryManager::UpdateIdle, this), interval, offset + 0);
+	scheduler->RunTaskEvery(std::make_shared<CGameTask>("CFactoryManager::UpdateAssist", &CFactoryManager::UpdateAssist, this), interval, offset + 2);
 
 	/*
 	 * factory handlers
