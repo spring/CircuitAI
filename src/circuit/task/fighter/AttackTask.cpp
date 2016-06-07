@@ -28,6 +28,7 @@ CAttackTask::CAttackTask(ITaskManager* mgr)
 		, pPath(std::make_shared<F3Vec>())
 		, minPower(.0f)
 {
+	name = "attack";
 	CCircuitAI* circuit = manager->GetCircuit();
 	float x = rand() % (circuit->GetTerrainManager()->GetTerrainWidth() + 1);
 	float z = rand() % (circuit->GetTerrainManager()->GetTerrainHeight() + 1);

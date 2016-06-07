@@ -136,6 +136,7 @@ int CCircuitAI::HandleGameEvent(int topic, const void* data)
 		case EVENT_UNIT_CREATED: {
 			PRINT_TOPIC("EVENT_UNIT_CREATED", topic);
 			struct SUnitCreatedEvent* evt = (struct SUnitCreatedEvent*)data;
+			LOG("%i | EVENT_UNIT_CREATED unitId: %i", skirmishAIId, evt->unit);
 			CCircuitUnit* builder = GetTeamUnit(evt->builder);
 			CCircuitUnit* unit = RegisterTeamUnit(evt->unit);
 			ret = (unit != nullptr) ? this->UnitCreated(unit, builder) : ERROR_UNIT_CREATED;
@@ -144,6 +145,7 @@ int CCircuitAI::HandleGameEvent(int topic, const void* data)
 		case EVENT_UNIT_FINISHED: {
 			PRINT_TOPIC("EVENT_UNIT_FINISHED", topic);
 			struct SUnitFinishedEvent* evt = (struct SUnitFinishedEvent*)data;
+			LOG("%i | EVENT_UNIT_FINISHED unitId: %i", skirmishAIId, evt->unit);
 			// Lua might call SetUnitHealth within eventHandler.UnitCreated(this, builder);
 			// and trigger UnitFinished before eoh->UnitCreated(*this, builder);
 			// @see rts/Sim/Units/Unit.cpp CUnit::PostInit
@@ -176,6 +178,7 @@ int CCircuitAI::HandleGameEvent(int topic, const void* data)
 		case EVENT_UNIT_DESTROYED: {
 			PRINT_TOPIC("EVENT_UNIT_DESTROYED", topic);
 			struct SUnitDestroyedEvent* evt = (struct SUnitDestroyedEvent*)data;
+			LOG("%i | EVENT_UNIT_DESTROYED unitId: %i", skirmishAIId, evt->unit);
 			CEnemyUnit* attacker = GetEnemyUnit(evt->attacker);
 			CCircuitUnit* unit = GetTeamUnit(evt->unit);
 			if (unit != nullptr) {
@@ -189,12 +192,14 @@ int CCircuitAI::HandleGameEvent(int topic, const void* data)
 		case EVENT_UNIT_GIVEN: {
 			PRINT_TOPIC("EVENT_UNIT_GIVEN", topic);
 			struct SUnitGivenEvent* evt = (struct SUnitGivenEvent*)data;
+			LOG("%i | EVENT_UNIT_GIVEN unitId: %i", skirmishAIId, evt->unitId);
 			ret = this->UnitGiven(evt->unitId, evt->oldTeamId, evt->newTeamId);
 			break;
 		}
 		case EVENT_UNIT_CAPTURED: {
 			PRINT_TOPIC("EVENT_UNIT_CAPTURED", topic);
 			struct SUnitCapturedEvent* evt = (struct SUnitCapturedEvent*)data;
+			LOG("%i | EVENT_UNIT_CAPTURED unitId: %i", skirmishAIId, evt->unitId);
 			ret = this->UnitCaptured(evt->unitId, evt->oldTeamId, evt->newTeamId);
 			break;
 		}
@@ -400,10 +405,7 @@ int CCircuitAI::Init(int skirmishAIId, const struct SSkirmishAICallback* sAICall
 #endif
 
 	CreateGameAttribute();
-	// FIXME: Yopta DEBUG
 	scheduler = std::make_shared<CScheduler>(this);
-	// FIXME: Yopta DEBUG
-//	scheduler = std::make_shared<CScheduler>();
 	scheduler->Init(scheduler);
 
 	std::string cfgName = InitOptions();

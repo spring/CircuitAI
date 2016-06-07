@@ -27,6 +27,7 @@ using namespace springai;
 CScoutTask::CScoutTask(ITaskManager* mgr)
 		: IFighterTask(mgr, FightType::SCOUT)
 {
+	name = "scout";
 }
 
 CScoutTask::~CScoutTask()

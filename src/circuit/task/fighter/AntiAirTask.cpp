@@ -15,6 +15,7 @@ CAntiAirTask::CAntiAirTask(ITaskManager* mgr, float enemyAir)
 		: IFighterTask(mgr, FightType::AA)
 		, enemyAir(enemyAir)
 {
+	name = "anti-air";
 }
 
 CAntiAirTask::~CAntiAirTask()

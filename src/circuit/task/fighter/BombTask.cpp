@@ -26,6 +26,7 @@ using namespace springai;
 CBombTask::CBombTask(ITaskManager* mgr)
 		: IFighterTask(mgr, FightType::BOMB)
 {
+	name = "bomb";
 }
 
 CBombTask::~CBombTask()

@@ -26,6 +26,7 @@ using namespace springai;
 CMeleeTask::CMeleeTask(ITaskManager* mgr)
 		: IFighterTask(mgr, FightType::SCOUT)
 {
+	name = "melee";
 }
 
 CMeleeTask::~CMeleeTask()

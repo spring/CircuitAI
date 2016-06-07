@@ -26,6 +26,7 @@ CDefendTask::CDefendTask(ITaskManager* mgr, const AIFloat3& position, float maxP
 		: ISquadTask(mgr, FightType::DEFEND)
 		, maxPower(maxPower)
 {
+	name = "defend";
 	this->position = position;
 
 	CCircuitAI* circuit = manager->GetCircuit();

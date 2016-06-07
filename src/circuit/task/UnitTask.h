@@ -20,6 +20,7 @@ class ITaskManager;
 
 class IUnitTask {  // CSquad, IAction
 public:
+	std::string name;
 	enum class Priority: char {LOW = 0, NORMAL = 1, HIGH = 2, NOW = 99};
 	enum class Type: char {PLAYER, IDLE, RETREAT, BUILDER, FACTORY, FIGHTER};
 

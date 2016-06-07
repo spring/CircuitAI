@@ -22,6 +22,7 @@ CRallyTask::CRallyTask(ITaskManager* mgr, float maxPower)
 		: IFighterTask(mgr, FightType::RALLY)
 		, maxPower(maxPower)
 {
+	name = "rally";
 	const AIFloat3& pos = manager->GetCircuit()->GetSetupManager()->GetBasePos();
 	position = utils::get_radial_pos(pos, SQUARE_SIZE * 32);
 }

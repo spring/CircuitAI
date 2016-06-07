@@ -113,7 +113,9 @@ CMilitaryManager::CMilitaryManager(CCircuitAI* circuit)
 	};
 	auto attackerDestroyedHandler = [this](CCircuitUnit* unit, CEnemyUnit* attacker) {
 		IUnitTask* task = unit->GetTask();
+		this->circuit->LOG("%i | attackerDestroyedHandler task: %s | %s", this->circuit->GetSkirmishAIId(), typeid(*task).name(), task->name.c_str());
 		task->OnUnitDestroyed(unit, attacker);  // can change task
+		this->circuit->LOG("%i | attackerDestroyedHandler task: %s | %s", this->circuit->GetSkirmishAIId(), typeid(*unit->GetTask()).name(), unit->GetTask()->name.c_str());
 		unit->GetTask()->RemoveAssignee(unit);  // Remove unit from IdleTask
 
 		if (unit->GetUnit()->IsBeingBuilt()) {  // alternative: task == nullTask

@@ -7,9 +7,8 @@
 
 #include "util/Scheduler.h"
 #include "util/utils.h"
-// FIXME: Yopta DEBUG
+
 #include "CircuitAI.h"
-// FIXME: Yopta DEBUG
 
 namespace circuit {
 
@@ -18,14 +17,6 @@ std::thread CScheduler::workerThread;
 std::atomic<bool> CScheduler::workerRunning(false);
 unsigned int CScheduler::counterInstance = 0;
 
-//CScheduler::CScheduler()
-//		: lastFrame(-1)
-//		, isProcessing(false)
-//{
-//	counterInstance++;
-//}
-
-// FIXME: Yopta DEBUG
 CScheduler::CScheduler(CCircuitAI* ai)
 		: ai(ai)
 		, lastFrame(-1)
@@ -33,7 +24,6 @@ CScheduler::CScheduler(CCircuitAI* ai)
 {
 	counterInstance++;
 }
-// FIXME: Yopta DEBUG
 
 CScheduler::~CScheduler()
 {
@@ -89,13 +79,8 @@ void CScheduler::ProcessTasks(int frame)
 	std::vector<OnceTask>::iterator ionce = onceTasks.begin();
 	while (ionce != onceTasks.end()) {
 		if (ionce->frame <= frame) {
-			// FIXME: Yopta DEBUG
 			try {
-			// FIXME: Yopta DEBUG
-
-			ionce->task->Run();
-
-			// FIXME: Yopta DEBUG
+				ionce->task->Run();
 			} catch (const std::exception& e) {
 				ai->LOG("%i | CScheduler::ProcessTasks Once EXCEPTION:\n%s", ai->GetSkirmishAIId(), e.what());
 				ai->LOG("%s", ionce->task->name.c_str());
@@ -103,7 +88,6 @@ void CScheduler::ProcessTasks(int frame)
 				ai->LOG("%i | CScheduler::ProcessTasks Once ELSE EXCEPTION", ai->GetSkirmishAIId());
 				ai->LOG("%s", ionce->task->name.c_str());
 			}
-			// FIXME: Yopta DEBUG
 			ionce = onceTasks.erase(ionce);  // alternatively, onceTasks.erase(iter++);
 		} else {
 			++ionce;
@@ -113,13 +97,8 @@ void CScheduler::ProcessTasks(int frame)
 	// Process repeat tasks
 	for (auto& container : repeatTasks) {
 		if (frame - container.lastFrame >= container.frameInterval) {
-			// FIXME: Yopta DEBUG
 			try {
-			// FIXME: Yopta DEBUG
-
-			container.task->Run();
-
-			// FIXME: Yopta DEBUG
+				container.task->Run();
 			} catch (const std::exception& e) {
 				ai->LOG("%i | CScheduler::ProcessTasks Repeat EXCEPTION:\n%s", ai->GetSkirmishAIId(), e.what());
 				ai->LOG("%s", container.task->name.c_str());
@@ -127,54 +106,39 @@ void CScheduler::ProcessTasks(int frame)
 				ai->LOG("%i | CScheduler::ProcessTasks Repeat ELSE EXCEPTION", ai->GetSkirmishAIId());
 				ai->LOG("%s", container.task->name.c_str());
 			}
-			// FIXME: Yopta DEBUG
 			container.lastFrame = frame;
 		}
 	}
 
-	// FIXME: Yopta DEBUG
 	try {
-	// FIXME: Yopta DEBUG
-
-	// Process onComplete from parallel tasks
-	CMultiQueue<FinishTask>::ProcessFunction process = [](FinishTask& item) {
-		item.task->Run();
-	};
-	finishTasks.PopAndProcess(process);
-
-	// FIXME: Yopta DEBUG
+		// Process onComplete from parallel tasks
+		CMultiQueue<FinishTask>::ProcessFunction process = [](FinishTask& item) {
+			item.task->Run();
+		};
+		finishTasks.PopAndProcess(process);
 	} catch (const std::exception& e) {
 		ai->LOG("%i | CScheduler::ProcessTasks PopAndProcess EXCEPTION:\n%s", ai->GetSkirmishAIId(), e.what());
 	} catch (...) {
 		ai->LOG("%i | CScheduler::ProcessTasks PopAndProcess ELSE EXCEPTION", ai->GetSkirmishAIId());
 	}
-	// FIXME: Yopta DEBUG
 
 	// Update task queues
 	if (!removeTasks.empty()) {
-		// FIXME: Yopta DEBUG
 		ai->LOG("%i | CScheduler::ProcessTasks Remove BEGIN | %i", ai->GetSkirmishAIId(), removeTasks.size());
-		// FIXME: Yopta DEBUG
 		for (auto& task : removeTasks) {
 			auto oend = std::remove(onceTasks.begin(), onceTasks.end(), OnceTask(task, 0));
-			// FIXME: Yopta DEBUG
 			if (oend != onceTasks.end()) {
 				ai->LOG("Once: %s", task->name.c_str());
 			}
-			// FIXME: Yopta DEBUG
 			onceTasks.erase(oend, onceTasks.end());
 			auto rend = std::remove(repeatTasks.begin(), repeatTasks.end(), RepeatTask(task, 0, 0));
-			// FIXME: Yopta DEBUG
 			if (rend != repeatTasks.end()) {
 				ai->LOG("Repeat: %s", task->name.c_str());
 			}
-			// FIXME: Yopta DEBUG
 			repeatTasks.erase(rend, repeatTasks.end());
 		}
 		removeTasks.clear();
-		// FIXME: Yopta DEBUG
 		ai->LOG("% i | CScheduler::ProcessTasks Remove END", ai->GetSkirmishAIId());
-		// FIXME: Yopta DEBUG
 	}
 
 	isProcessing = false;

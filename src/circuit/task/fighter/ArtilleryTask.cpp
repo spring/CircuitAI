@@ -27,6 +27,7 @@ using namespace springai;
 CArtilleryTask::CArtilleryTask(ITaskManager* mgr)
 		: IFighterTask(mgr, FightType::ARTY)
 {
+	name = "artillery";
 	position = manager->GetCircuit()->GetSetupManager()->GetBasePos();
 }
 
@@ -100,7 +101,15 @@ void CArtilleryTask::Execute(CCircuitUnit* unit, bool isUpdating)
 			moveAction->SetActive(true);
 			unit->Update(circuit);
 		} else {
-			unit->GetUnit()->Fight(position, UNIT_COMMAND_OPTION_RIGHT_MOUSE_KEY, frame + FRAMES_PER_SEC * 60);
+//			try {
+				unit->GetUnit()->Fight(position, UNIT_COMMAND_OPTION_RIGHT_MOUSE_KEY, frame + FRAMES_PER_SEC * 60);
+//			} catch (const CallbackAIException& e) {
+//				circuit->LOG("%i | CArtilleryTask::Execute_0 | unitId: %i\n%s", circuit->GetSkirmishAIId(), unit->GetId(), e.what());
+//			} catch (const std::exception& e) {
+//				circuit->LOG("%i | CArtilleryTask::Execute_0 | unitPtr: %i\n%s", circuit->GetSkirmishAIId(), unit, e.what());
+//			} catch (...) {
+//				circuit->LOG("%i | CArtilleryTask::Execute_0 UNKNOWN EXCEPTION | unitPtr: %i", circuit->GetSkirmishAIId(), unit);
+//			}
 		}
 		return;
 	}
