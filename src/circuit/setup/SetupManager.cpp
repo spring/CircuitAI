@@ -12,6 +12,7 @@
 #include "CircuitAI.h"
 #include "util/Scheduler.h"
 #include "util/utils.h"
+#include "util/regex.h"
 #include "json/json.h"
 
 #include "OOAICallback.h"
@@ -21,8 +22,6 @@
 #include "File.h"
 #include "Log.h"
 #include "Lua.h"
-
-#include <regex>
 
 namespace circuit {
 
@@ -54,17 +53,17 @@ CSetupManager::~CSetupManager()
 void CSetupManager::DisabledUnits(const char* setupScript)
 {
 	std::string script(setupScript);
-	std::regex patternDisabled("disabledunits=(.*);", std::regex::ECMAScript | std::regex::icase);
+	REGEX patternDisabled("disabledunits=(.*);", REGEX::ECMAScript | REGEX::icase);
 	std::string::const_iterator start = script.begin();
 	std::string::const_iterator end = script.end();
-	std::smatch section;
-	if (std::regex_search(start, end, section, patternDisabled)) {
+	SMATCH section;
+	if (REGEX_SEARCH(start, end, section, patternDisabled)) {
 		// !setoptions disabledunits=raveparty+zenith+mahlaze
 		std::string opt_str = section[1];
 		start = opt_str.begin();
 		end = opt_str.end();
-		std::regex patternUnit("\\w+");
-		while (std::regex_search(start, end, section, patternUnit)) {
+		REGEX patternUnit("\\w+");
+		while (REGEX_SEARCH(start, end, section, patternUnit)) {
 			CCircuitDef* cdef = circuit->GetCircuitDef(std::string(section[0]).c_str());
 			if (cdef != nullptr) {
 				cdef->SetMaxThisUnit(0);

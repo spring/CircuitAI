@@ -9,14 +9,13 @@
 #include "CircuitAI.h"
 #include "util/GameAttribute.h"
 #include "util/utils.h"
+#include "util/regex.h"
 
 #include "WeaponMount.h"
 #include "WeaponDef.h"
 #include "Damage.h"
 #include "Shield.h"
 #include "MoveData.h"
-
-#include <regex>
 
 namespace circuit {
 
@@ -86,10 +85,10 @@ CCircuitDef::CCircuitDef(CCircuitAI* circuit, UnitDef* def, std::unordered_set<I
 		const std::string& str = it->second;
 		std::string::const_iterator start = str.begin();
 		std::string::const_iterator end = str.end();
-		std::regex pattern("(-?\\d+)");
-		std::smatch section;
+		REGEX pattern("(-?\\d+)");
+		SMATCH section;
 		int index = 0;
-		while (std::regex_search(start, end, section, pattern) && (index < 3)) {
+		while (REGEX_SEARCH(start, end, section, pattern) && (index < 3)) {
 			midPosOffset[index++] = utils::string_to_float(section[1]);
 			start = section[0].second;
 		}

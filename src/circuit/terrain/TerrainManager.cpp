@@ -419,8 +419,8 @@ const SBlockingMap& CTerrainManager::GetBlockingMap()
 
 bool CTerrainManager::ResignAllyBuilding(CCircuitUnit* unit)
 {
-	auto it = markedAllies.cbegin();
-	while (it != markedAllies.cend()) {
+	auto it = markedAllies.begin();
+	while (it != markedAllies.end()) {
 		if (it->unitId == unit->GetId()) {
 			markedAllies.erase(it);
 			return true;
