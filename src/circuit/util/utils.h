@@ -9,11 +9,11 @@
 #define SRC_CIRCUIT_UTIL_UTILS_H_
 
 #include "util/Defines.h"
+#include "util/thread.h"
 
 #include "System/Util.h"
 
 #include <chrono>
-#include <thread>
 
 #include <string.h>
 #include <stdarg.h>  // for va_start, etc
@@ -140,7 +140,7 @@ static inline float string_to_float(const std::string &str)
 
 static inline void sleep(int64_t seconds)
 {
-	std::this_thread::sleep_for(std::chrono::seconds(seconds));
+	THIS_THREAD::sleep_for(std::chrono::seconds(seconds));
 }
 
 //template<typename T>

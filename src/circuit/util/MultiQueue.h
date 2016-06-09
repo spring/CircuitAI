@@ -8,8 +8,9 @@
 #ifndef SRC_CIRCUIT_UTIL_MULTIQUEUE_H_
 #define SRC_CIRCUIT_UTIL_MULTIQUEUE_H_
 
+#include "util/mutex.h"
+
 #include <deque>
-#include <mutex>
 #include <condition_variable>
 #include <functional>
 
@@ -48,7 +49,7 @@ public:
 
 private:
 	std::deque<T> _queue;
-	std::mutex _mutex;
+	MUTEX _mutex;
 	std::condition_variable _cond;
 };
 

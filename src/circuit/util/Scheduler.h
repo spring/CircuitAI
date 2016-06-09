@@ -11,9 +11,9 @@
 #include "util/MultiQueue.h"
 #include "util/GameTask.h"
 #include "util/Defines.h"
+#include "util/thread.h"
 
 #include <memory>
-#include <thread>
 #include <atomic>
 
 namespace circuit {
@@ -119,7 +119,7 @@ private:
 
 	std::vector<std::shared_ptr<CGameTask>> releaseTasks;
 
-	static std::thread workerThread;
+	static THREAD workerThread;
 	static std::atomic<bool> workerRunning;
 	static unsigned int counterInstance;
 
