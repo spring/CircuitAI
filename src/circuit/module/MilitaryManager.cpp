@@ -275,8 +275,8 @@ IFighterTask* CMilitaryManager::EnqueueTask(IFighterTask::FightType type)
 	switch (type) {
 		default:
 		case IFighterTask::FightType::RALLY: {
-			CEconomyManager* economyManager = circuit->GetEconomyManager();
-			float power = economyManager->GetAvgMetalIncome() * economyManager->GetEcoFactor() * 32.0f;
+//			CEconomyManager* economyManager = circuit->GetEconomyManager();
+//			float power = economyManager->GetAvgMetalIncome() * economyManager->GetEcoFactor() * 32.0f;
 			task = new CRallyTask(this, /*power*/1);  // TODO: pass enemy's threat
 			break;
 		}

@@ -5,6 +5,24 @@ set(mySourceDirRel         "src/") # Common values are "" or "src"
 set(additionalSources      ${CMAKE_SOURCE_DIR}/rts/System/Util.cpp)
 set(additionalLibraries    ${Cpp_AIWRAPPER_TARGET} CUtils)
 
+# try std::regex, use boost::regex otherwise
+include(CMakePushCheckState)
+include(CheckCXXSourceRuns)
+cmake_push_check_state()
+set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} -std=c++11")
+check_cxx_source_runs("
+  #include <regex>
+  int main() {
+    return std::regex_match(\"StackOverflow\", std::regex(\"(stack)(.*)\", std::regex::ECMAScript | std::regex::icase)) ? 0 : 1;
+  }
+" HAVE_CXX_11_REGEX)
+cmake_pop_check_state()
+if    (HAVE_CXX_11_REGEX)
+	add_definitions(-DHAVE_CXX_11_REGEX)
+else  (HAVE_CXX_11_REGEX)
+	set(additionalLibraries    ${additionalLibraries} boost_regex.a)
+endif (HAVE_CXX_11_REGEX)
+
 #set(additionalCompileFlags "-Isrc/lib/ -Isrc/circuit/ -O1 -DDEBUG -DDEBUG_VIS -DDEBUG_LOG -Wall -Wextra -D_GLIBCXX_USE_CXX11_ABI=0")
 # Spring 100.0 was compiled with old ABI
 if ("${CMAKE_SYSTEM}" MATCHES "ARCH")

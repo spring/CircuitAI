@@ -508,7 +508,7 @@ IBuilderTask* CEconomyManager::UpdateEnergyTasks(const AIFloat3& position, CCirc
 
 	// Select proper energy UnitDef to build
 	CCircuitDef* bestDef = nullptr;
-	float cost;
+	float cost = 1.0f;
 	metalIncome = std::min(metalIncome, energyIncome) * incomeFactor;
 	float buildPower = std::min(builderManager->GetBuilderPower(), metalIncome);
 	int taskSize = builderManager->GetTasks(IBuilderTask::BuildType::ENERGY).size();
