@@ -61,6 +61,9 @@ void IRepairTask::Execute(CCircuitUnit* unit)
 	if (targetId == -1) {
 		repTarget = FindUnitToAssist(unit);
 		if (repTarget == nullptr) {
+			// FIXME: DEBUG
+			circuit->LOG("Repair | ai: %i | buildType: %i | pos: (%f, %f, %f)", circuit->GetSkirmishAIId(), buildType, position.x, position.y, position.z);
+			// FIXME: DEBUG
 			manager->FallbackTask(unit);
 			return;
 		}

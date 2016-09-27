@@ -15,6 +15,11 @@
 #include "Mod.h"
 #include "Map.h"
 
+// FIXME: DEBUG
+#undef NDEBUG
+#include <cassert>
+// FIXME: DEBUG
+
 namespace circuit {
 
 using namespace springai;
@@ -56,6 +61,9 @@ CThreatMap::CThreatMap(CCircuitAI* circuit)
 	losMap = std::move(map->GetLosMap());
 	losWidth = mapWidth >> losMipLevel;
 	losResConv = SQUARE_SIZE << losMipLevel;
+	// FIXME: DEBUG
+	circuit->LOG("losWidth: %i | losMapSize: %i | losResConv: %i", losWidth, losMap.size(), losResConv);
+	// FIXME: DEBUG
 }
 
 CThreatMap::~CThreatMap()
@@ -705,13 +713,24 @@ bool CThreatMap::IsInLOS(const AIFloat3& pos) const
 	// convert from world coordinates to losmap coordinates
 	const int x = (int)pos.x / losResConv;
 	const int z = (int)pos.z / losResConv;
+	// FIXME: DEBUG
+	if (pos.x < 0 || pos.x >= circuit->GetTerrainManager()->GetTerrainWidth() ||
+		pos.z < 0 || pos.z >= circuit->GetTerrainManager()->GetTerrainHeight() ||
+		x < 0 || z < 0 || z * losWidth + x >= losMap.size())
+	{
+		circuit->LOG("pos: (%f, %f) | xz: (%i, %i) | idx: %i | size:: %i", pos.x, pos.z, x, z, z * losWidth + x, losMap.size());
+		assert(!(pos.x < 0 || pos.x >= circuit->GetTerrainManager()->GetTerrainWidth() ||
+				pos.z < 0 || pos.z >= circuit->GetTerrainManager()->GetTerrainHeight() ||
+				x < 0 || z < 0 || z * losWidth + x >= losMap.size()));
+	}
+	// FIXME: DEBUG
 	return losMap[z * losWidth + x] > 0;
 }
 
 //bool CThreatMap::IsInRadar(const AIFloat3& pos) const
 //{
-//	// the value for the full resolution position (x, z) is at index ((z * width + x) / 8)
-//	// the last value, bottom right, is at index (width/8 * height/8 - 1)
+//	// the value for the full resolution position (x, z) is at index ((z * width + x) / res)
+//	// the last value, bottom right, is at index (width/res * height/res - 1)
 //
 //	// convert from world coordinates to radarmap coordinates
 //	const int x = (int)pos.x / radarResConv;

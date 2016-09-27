@@ -99,6 +99,9 @@ void CBMexTask::Execute(CCircuitUnit* unit)
 		}
 	}
 
+	// FIXME: DEBUG
+	circuit->LOG("ai: %i | buildType: %i | pos: (%f, %f, %f)", circuit->GetSkirmishAIId(), buildType, position.x, position.y, position.z);
+	// FIXME: DEBUG
 	// Fallback to Guard/Assist/Patrol
 	manager->FallbackTask(unit);
 }

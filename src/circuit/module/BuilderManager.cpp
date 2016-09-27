@@ -607,6 +607,9 @@ void CBuilderManager::DoneTask(IUnitTask* task)
 
 void CBuilderManager::FallbackTask(CCircuitUnit* unit)
 {
+	// FIXME: DEBUG
+	circuit->LOG("ai: %i | buildTasksCount: %i | workerSize: %i", circuit->GetSkirmishAIId(), buildTasksCount, workers.size());
+	// FIXME: DEBUG
 	DequeueTask(static_cast<IBuilderTask*>(unit->GetTask()));
 
 	int frame = circuit->GetLastFrame();

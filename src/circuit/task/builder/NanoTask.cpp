@@ -74,6 +74,9 @@ void CBNanoTask::Execute(CCircuitUnit* unit)
 			u->Build(buildUDef, buildPos, facing, UNIT_COMMAND_OPTION_INTERNAL_ORDER, frame + FRAMES_PER_SEC * 60);
 		)
 	} else {
+		// FIXME: DEBUG
+		circuit->LOG("ai: %i | buildType: %i | pos: (%f, %f, %f)", circuit->GetSkirmishAIId(), buildType, position.x, position.y, position.z);
+		// FIXME: DEBUG
 		// Fallback to Guard/Assist/Patrol
 		manager->FallbackTask(unit);
 	}

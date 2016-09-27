@@ -164,6 +164,9 @@ void IBuilderTask::Execute(CCircuitUnit* unit)
 		AIFloat3 pos(x, circuit->GetMap()->GetElevationAt(x, z), z);
 		circuit->GetSetupManager()->SetBasePos(pos);
 
+		// FIXME: DEBUG
+		circuit->LOG("ai: %i | buildType: %i | pos: (%f, %f, %f)", circuit->GetSkirmishAIId(), buildType, position.x, position.y, position.z);
+		// FIXME: DEBUG
 		// Fallback to Guard/Assist/Patrol
 		manager->FallbackTask(unit);
 	}
