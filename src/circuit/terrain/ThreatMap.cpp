@@ -10,6 +10,10 @@
 #include "terrain/TerrainManager.h"
 #include "unit/EnemyUnit.h"
 #include "util/utils.h"
+// FIXME: DEBUG
+#include "setup/SetupManager.h"
+#include "json/json.h"
+// FIXME: DEBUG
 
 #include "OOAICallback.h"
 #include "Mod.h"
@@ -62,25 +66,29 @@ CThreatMap::CThreatMap(CCircuitAI* circuit, float decloakRadius)
 	losResConv = SQUARE_SIZE << losMipLevel;
 
 	constexpr float allowedRange = 2000.f;
+	// FIXME: DEBUG
+	const Json::Value& root = circuit->GetSetupManager()->GetConfig();
+	const float x = root.get("slack_mult", 2.f).asFloat();
+	// FIXME: DEBUG
 	for (auto& kv : circuit->GetCircuitDefs()) {
 		CCircuitDef* cdef = kv.second;
-		const int slack = DEFAULT_SLACK * (cdef->IsMobile() ? 4 : 2);
+		const float slack = cdef->IsMobile() ? (x * cdef->GetSpeed() * DEFAULT_SLACK) : std::max(cdef->GetAoe(), DEFAULT_SLACK * 3.f);
 		float realRange;
 		int range;
 		int maxRange;
 
 		realRange = cdef->GetMaxRange(CCircuitDef::RangeType::AIR);
-		range = cdef->HasAntiAir() ? ((int)realRange + slack) / squareSize : 0;
+		range = cdef->HasAntiAir() ? int(realRange + slack) / squareSize : 0;
 		cdef->SetThreatRange(CCircuitDef::ThreatType::AIR, range);
 		maxRange = range;
 
 		realRange = cdef->GetMaxRange(CCircuitDef::RangeType::LAND);
-		range = (cdef->HasAntiLand() && (realRange <= allowedRange)) ? ((int)realRange + slack) / squareSize : 0;
+		range = (cdef->HasAntiLand() && (realRange <= allowedRange)) ? int(realRange + slack) / squareSize : 0;
 		cdef->SetThreatRange(CCircuitDef::ThreatType::LAND, range);
 		maxRange = std::max(maxRange, range);
 
 		realRange = cdef->GetMaxRange(CCircuitDef::RangeType::WATER);
-		range = (cdef->HasAntiWater() && (realRange <= allowedRange)) ? ((int)realRange + slack) / squareSize : 0;
+		range = (cdef->HasAntiWater() && (realRange <= allowedRange)) ? int(realRange + slack) / squareSize : 0;
 		cdef->SetThreatRange(CCircuitDef::ThreatType::WATER, range);
 		maxRange = std::max(maxRange, range);
 
@@ -732,9 +740,17 @@ void CThreatMap::SetEnemyUnitRange(CEnemyUnit* e) const
 	const CCircuitDef* edef = e->GetCircuitDef();
 	assert(edef != nullptr);
 
-	for (CCircuitDef::ThreatT tt = 0; tt < static_cast<CCircuitDef::ThreatT>(CCircuitDef::ThreatType::_SIZE_); ++tt) {
-		CCircuitDef::ThreatType type = static_cast<CCircuitDef::ThreatType>(tt);
-		e->SetRange(type, edef->GetThreatRange(type));
+	const float mult = e->GetUnit()->GetRulesParamFloat("comm_range_mult", -1);
+	if (mult > 0) {
+		for (CCircuitDef::ThreatT tt = 0; tt < static_cast<CCircuitDef::ThreatT>(CCircuitDef::ThreatType::_SIZE_); ++tt) {
+			const CCircuitDef::ThreatType type = static_cast<CCircuitDef::ThreatType>(tt);
+			e->SetRange(type, edef->GetThreatRange(type) * mult);
+		}
+	} else {
+		for (CCircuitDef::ThreatT tt = 0; tt < static_cast<CCircuitDef::ThreatT>(CCircuitDef::ThreatType::_SIZE_); ++tt) {
+			const CCircuitDef::ThreatType type = static_cast<CCircuitDef::ThreatType>(tt);
+			e->SetRange(type, edef->GetThreatRange(type));
+		}
 	}
 }
 

@@ -80,6 +80,9 @@ public:
 	void AddEnemyCost(const CEnemyUnit* e);
 	void DelEnemyCost(const CEnemyUnit* e);
 	float GetEnemyThreat() const { return enemyThreat; }
+	// FIXME: DEBUG
+	bool IsAirValid() const { return antiAirThreat <= maxAAThreat; }
+	// FIXME: DEBUG
 	const std::vector<SEnemyGroup>& GetEnemyGroups() const { return enemyGroups; }
 	const springai::AIFloat3& GetEnemyPos() const { return enemyPos; }
 	void UpdateEnemyGroups() { KMeansIteration(); }
@@ -150,6 +153,10 @@ private:
 	std::set<CCircuitUnit*> army;
 	float armyCost;
 
+	// FIXME: DEBUG
+	float maxAAThreat;
+	float antiAirThreat;
+	// FIXME: DEBUG
 	float enemyThreat;
 	std::array<float, static_cast<CCircuitDef::RoleT>(CCircuitDef::RoleType::_SIZE_)> enemyCosts{{0.f}};
 	std::vector<SEnemyGroup> enemyGroups;

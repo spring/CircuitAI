@@ -109,6 +109,11 @@ CFactoryManager::CFactoryManager(CCircuitAI* circuit)
 		} else {
 			factories.emplace_back(unit, nanos, 0, nullptr);
 		}
+		// FIXME: DEBUG
+		if (unit->GetCircuitDef()->GetMobileId() < 0) {
+			airValid.insert(unit);
+		}
+		// FIXME: DEBUG
 	};
 	auto factoryIdleHandler = [this](CCircuitUnit* unit) {
 		unit->GetTask()->OnUnitIdle(unit);
@@ -184,6 +189,11 @@ CFactoryManager::CFactoryManager(CCircuitAI* circuit)
 		}
 
 		checkBuilderFactory();
+		// FIXME: DEBUG
+		if (unit->GetCircuitDef()->GetMobileId() < 0) {
+			airValid.erase(unit);
+		}
+		// FIXME: DEBUG
 	};
 
 	/*
@@ -1068,6 +1078,22 @@ IUnitTask* CFactoryManager::CreateFactoryTask(CCircuitUnit* unit)
 	if (isNotReady) {
 		return EnqueueWait(FRAMES_PER_SEC * 3);
 	}
+
+	// FIXME: DEBUG
+	if (unit->GetCircuitDef()->GetMobileId() < 0) {
+		if (circuit->GetMilitaryManager()->IsAirValid()) {
+			if (airValid.find(unit) == airValid.end()) {
+				UnitFinished(unit);
+				return idleTask;
+			}
+		} else {
+			if (airValid.find(unit) != airValid.end()) {
+				UnitDestroyed(unit, nullptr);
+			}
+			return EnqueueWait(FRAMES_PER_SEC * 10);
+		}
+	}
+	// FIXME: DEBUG
 
 	IUnitTask* task = UpdateBuildPower(unit);
 	if (task != nullptr) {

@@ -52,6 +52,7 @@ CMilitaryManager::CMilitaryManager(CCircuitAI* circuit)
 		, defenceIdx(0)
 		, scoutIdx(0)
 		, armyCost(0.f)
+		, antiAirThreat(0.f)
 		, enemyThreat(0.f)
 		, radarDef(nullptr)
 		, sonarDef(nullptr)
@@ -267,6 +268,9 @@ CMilitaryManager::CMilitaryManager(CCircuitAI* circuit)
 
 	enemyPos = AIFloat3(circuit->GetTerrainManager()->GetTerrainWidth() / 2, 0, circuit->GetTerrainManager()->GetTerrainHeight() / 2);
 	enemyGroups.push_back(SEnemyGroup(enemyPos));
+	// FIXME: DEBUG
+	maxAAThreat = root.get("anti_air_threat", 50.f).asFloat();
+	// FIXME: DEBUG
 }
 
 CMilitaryManager::~CMilitaryManager()
@@ -822,6 +826,9 @@ void CMilitaryManager::AddEnemyCost(const CEnemyUnit* e)
 	if (cdef->IsMobile()) {
 		enemyThreat += cdef->GetThreat();
 	}
+	if (cdef->IsEnemyRoleAny(CCircuitDef::RoleMask::AA)) {
+		antiAirThreat += cdef->GetThreat();
+	}
 }
 
 void CMilitaryManager::DelEnemyCost(const CEnemyUnit* e)
@@ -837,6 +844,9 @@ void CMilitaryManager::DelEnemyCost(const CEnemyUnit* e)
 	}
 	if (cdef->IsMobile()) {
 		enemyThreat = std::max(enemyThreat - cdef->GetThreat(), 0.f);
+	}
+	if (cdef->IsEnemyRoleAny(CCircuitDef::RoleMask::AA)) {
+		antiAirThreat = std::max(antiAirThreat - cdef->GetThreat(), 0.f);
 	}
 }
 

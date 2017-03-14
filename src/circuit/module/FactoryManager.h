@@ -116,6 +116,9 @@ private:
 		CCircuitDef* builder;
 	};
 	std::vector<SFactory> factories;  // facory 1:n nano
+	// FIXME: DEBUG
+	std::set<CCircuitUnit*> airValid;
+	// FIXME: DEBUG
 
 	struct SFactoryDef {
 		using Tiers = std::map<unsigned, std::vector<float>>;
