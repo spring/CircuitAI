@@ -2,7 +2,7 @@
 #
 
 set(mySourceDirRel         "src/") # Common values are "" or "src"
-set(additionalSources      ${CMAKE_SOURCE_DIR}/rts/System/Util.cpp)
+set(additionalSources      ${CMAKE_SOURCE_DIR}/rts/System/StringUtil.cpp)
 set(additionalSources      ${additionalSources} ${CMAKE_SOURCE_DIR}/rts/System/Misc/SpringTime.cpp)
 if (WIN32)  # spring::condition_variable_any requirement
 	set(additionalSources  ${additionalSources} ${CMAKE_SOURCE_DIR}/rts/System/Platform/Win/CriticalSection.cpp)
@@ -17,14 +17,14 @@ set(additionalLibraries    ${Cpp_AIWRAPPER_TARGET} CUtils)
 #set(additionalCompileFlags "-Isrc/lib/ -Isrc/circuit/ -O1 -DDEBUG -DDEBUG_VIS -DDEBUG_LOG -Wall -Wextra -D_GLIBCXX_USE_CXX11_ABI=0")
 # Spring 100.0 was compiled with old ABI
 if ("${CMAKE_SYSTEM}" MATCHES "ARCH")
-	set(additionalCompileFlags "-DDEBUG_VIS -Wall -D_GLIBCXX_USE_CXX11_ABI=1")
-#	set(additionalCompileFlags "-DDEBUG_LOG -Wall -D_GLIBCXX_USE_CXX11_ABI=1 -fsanitize=address -fno-omit-frame-pointer -fno-common -O1")
+#	set(additionalCompileFlags "-DDEBUG_VIS -Wall -D_GLIBCXX_USE_CXX11_ABI=1")
+	set(additionalCompileFlags "-DDEBUG_LOG -Wall -D_GLIBCXX_USE_CXX11_ABI=1 -fsanitize=address -fno-omit-frame-pointer -fno-common -O1")
 else ()
 	set(additionalCompileFlags "-DDEBUG_LOG -Wall -D_GLIBCXX_USE_CXX11_ABI=0")
 endif ()
 
-set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -static-libgcc -static-libstdc++")
-#set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -static-libgcc -static-libstdc++ -lasan")
+#set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -static-libgcc -static-libstdc++")
+set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -static-libgcc -static-libstdc++ -lasan")
 
 
 if    (BUILD_Cpp_AIWRAPPER)
