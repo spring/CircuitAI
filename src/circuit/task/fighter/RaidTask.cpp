@@ -279,7 +279,7 @@ void CRaidTask::FindTarget()
 	const float range = std::max(leader->GetUnit()->GetMaxRange() + threatMap->GetSquareSize() * 2,
 								 cdef->GetLosRadius());
 	float minSqDist = SQUARE(range);
-	float maxThreat = 0.f;
+	float maxPwrToThr = -1;
 	float minPower = maxPower;
 
 	SetTarget(nullptr);  // make adequate enemy->GetTasks().size()
@@ -304,7 +304,7 @@ void CRaidTask::FindTarget()
 		}
 
 		int targetCat;
-		float defThreat;
+		float p2t = 0;
 		bool isBuilder;
 		CCircuitDef* edef = enemy->GetCircuitDef();
 		if (edef != nullptr) {
@@ -315,11 +315,10 @@ void CRaidTask::FindTarget()
 			{
 				continue;
 			}
-			defThreat = edef->GetPower();
+			p2t = edef->GetPower() / enemy->GetThreat();
 			isBuilder = edef->IsEnemyRoleAny(CCircuitDef::RoleMask::BUILDER | CCircuitDef::RoleMask::COMM);
 		} else {
 			targetCat = UNKNOWN_CATEGORY;
-			defThreat = enemy->GetThreat();
 			isBuilder = false;
 		}
 
@@ -330,11 +329,11 @@ void CRaidTask::FindTarget()
 					if (isBuilder) {
 						bestTarget = enemy;
 						minSqDist = sqDist;
-						maxThreat = std::numeric_limits<float>::max();
-					} else if (maxThreat <= defThreat) {
+						maxPwrToThr = std::numeric_limits<float>::max();
+					} else if (maxPwrToThr <= p2t) {
 						bestTarget = enemy;
 						minSqDist = sqDist;
-						maxThreat = defThreat;
+						maxPwrToThr = p2t;
 					}
 					minPower = power;
 				} else if (bestTarget == nullptr) {

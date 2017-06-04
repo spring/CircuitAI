@@ -30,7 +30,7 @@ class CRagMatrix;
 class CMetalData {
 private:
 	// NOTE: Pointtree is also a very pretty candidate for range searches.
-	// Because map coordinates are big enough we can use only integer part.
+	// Because map coordinates are big enough we could use only integer part.
 	// @see https://github.com/Warzone2100/warzone2100/blob/master/src/pointtree.cpp
 	using point = bg::model::point<float, 2, bg::cs::cartesian>;
 	using box = bg::model::box<point>;

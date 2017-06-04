@@ -402,7 +402,8 @@ float CThreatMap::GetThreatAt(CCircuitUnit* unit, const AIFloat3& position) cons
 float CThreatMap::GetUnitThreat(CCircuitUnit* unit) const
 {
 	float health = unit->GetUnit()->GetHealth() + unit->GetShieldPower() * 2.0f;
-	return unit->GetDamage() * sqrtf(std::max(health, 0.f));  // / unit->GetUnit()->GetMaxHealth();
+	float remPerc = health / unit->GetUnit()->GetMaxHealth();
+	return unit->GetDamage() * sqrtf(std::max(health, 0.f)) / remPerc;
 }
 
 inline void CThreatMap::PosToXZ(const AIFloat3& pos, int& x, int& z) const
@@ -779,7 +780,9 @@ float CThreatMap::GetEnemyUnitThreat(CEnemyUnit* enemy) const
 	}
 	int x, z;
 	PosToXZ(enemy->GetPos(), x, z);
-	return enemy->GetDamage() * sqrtf(health + shield[z * width + x] * 2.0f);  // / unit->GetUnit()->GetMaxHealth();
+	float health2 = health + shield[z * width + x] * 2.0f;
+	float remPerc = health2 / enemy->GetUnit()->GetMaxHealth();
+	return enemy->GetDamage() * sqrtf(health2) / remPerc;
 }
 
 bool CThreatMap::IsInLOS(const AIFloat3& pos) const

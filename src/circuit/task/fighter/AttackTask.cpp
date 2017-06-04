@@ -277,6 +277,7 @@ void CAttackTask::FindTarget()
 	CEnemyUnit* bestTarget = nullptr;
 	const float sqOBDist = pos.SqDistance2D(basePos);
 	float minSqDist = std::numeric_limits<float>::max();
+	float pwrToThr = -1;
 
 	SetTarget(nullptr);  // make adequate enemy->GetTasks().size()
 	threatMap->SetThreatType(leader);
@@ -298,6 +299,7 @@ void CAttackTask::FindTarget()
 		}
 
 		CCircuitDef* edef = enemy->GetCircuitDef();
+		float p2t = 0;
 		if (edef != nullptr) {
 			if (((edef->GetCategory() & canTargetCat) == 0) || ((edef->GetCategory() & noChaseCat) != 0) ||
 				(edef->IsAbleToFly() && notAA) ||
@@ -306,10 +308,12 @@ void CAttackTask::FindTarget()
 			{
 				continue;
 			}
+			p2t = edef->GetPower() / enemy->GetThreat();
 		}
 
 		const float sqOEDist = pos.SqDistance2D(ePos) * scale;
-		if (minSqDist > sqOEDist) {
+		if ((pwrToThr < p2t) || ((pwrToThr == p2t) && (minSqDist > sqOEDist))) {
+			pwrToThr = p2t;
 			minSqDist = sqOEDist;
 			bestTarget = enemy;
 		}

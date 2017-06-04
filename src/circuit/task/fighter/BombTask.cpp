@@ -198,7 +198,7 @@ CEnemyUnit* CBombTask::FindTarget(CCircuitUnit* unit, CEnemyUnit* lastTarget, co
 //	const float range = std::max(unit->GetUnit()->GetMaxRange() + threatMap->GetSquareSize(),
 //								 cdef->GetLosRadius()) * 2;
 	const float sqRange = (lastTarget != nullptr) ? pos.SqDistance2D(lastTarget->GetPos()) + 1.f : SQUARE(2000.0f);
-	float maxThreat = .0f;
+	float maxPwrToThr = -1;
 
 	CEnemyUnit* bestTarget = nullptr;
 	CEnemyUnit* mediumTarget = nullptr;
@@ -220,7 +220,7 @@ CEnemyUnit* CBombTask::FindTarget(CCircuitUnit* unit, CEnemyUnit* lastTarget, co
 
 		int targetCat;
 //		float altitude;
-		float defThreat;
+		float p2t = 0;
 		bool isBuilder;
 		CCircuitDef* edef = enemy->GetCircuitDef();
 		if (edef != nullptr) {
@@ -232,31 +232,30 @@ CEnemyUnit* CBombTask::FindTarget(CCircuitUnit* unit, CEnemyUnit* lastTarget, co
 				continue;
 			}
 //			altitude = edef->GetAltitude();
-			defThreat = edef->GetPower();
+			p2t = edef->GetPower() / enemy->GetThreat();
 			isBuilder = edef->IsEnemyRoleAny(CCircuitDef::RoleMask::BUILDER | CCircuitDef::RoleMask::COMM);
 		} else {
 			targetCat = UNKNOWN_CATEGORY;
 //			altitude = 0.f;
-			defThreat = enemy->GetThreat();
 			isBuilder = false;
 		}
 
-		float sumPower = 0.f;
-		for (IFighterTask* task : enemy->GetTasks()) {
-			sumPower += task->GetAttackPower();
-		}
-		if (sumPower > defThreat) {
-			continue;
-		}
+//		float sumPower = 0.f;
+//		for (IFighterTask* task : enemy->GetTasks()) {
+//			sumPower += task->GetAttackPower();
+//		}
+//		if (sumPower > p2t) {
+//			continue;
+//		}
 
 		float sqDist = pos.SqDistance2D(enemy->GetPos());
 		if ((sqDist < sqRange) && enemy->IsInRadarOrLOS()/* && (altitude < maxAltitude)*/) {
 			if (isBuilder) {
 				bestTarget = enemy;
-				maxThreat = std::numeric_limits<float>::max();
-			} else if (maxThreat <= defThreat) {
+				maxPwrToThr = std::numeric_limits<float>::max();
+			} else if (maxPwrToThr <= p2t) {
 				bestTarget = enemy;
-				maxThreat = defThreat;
+				maxPwrToThr = p2t;
 			} else if (bestTarget == nullptr) {
 				if ((targetCat & noChaseCat) == 0) {
 					mediumTarget = enemy;
