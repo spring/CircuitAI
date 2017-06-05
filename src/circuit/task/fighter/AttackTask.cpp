@@ -308,7 +308,7 @@ void CAttackTask::FindTarget()
 			{
 				continue;
 			}
-			p2t = edef->GetPower() / enemy->GetThreat();
+			p2t = (enemy->GetThreat() > 0) ? edef->GetPower() / enemy->GetThreat() : 0;
 		}
 
 		const float sqOEDist = pos.SqDistance2D(ePos) * scale;
