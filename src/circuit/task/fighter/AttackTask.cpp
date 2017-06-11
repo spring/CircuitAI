@@ -284,6 +284,15 @@ void CAttackTask::FindTarget()
 	for (auto& kv : enemies) {
 		CEnemyUnit* enemy = kv.second;
 		if (enemy->IsHidden() || (enemy->GetTasks().size() > 2)) {
+			// FIXME: DEBUG
+			if ((enemy->GetCircuitDef() != nullptr) && enemy->GetCircuitDef()->IsRoleComm()) {
+				if (enemy->IsHidden()) {
+					circuit->LOG("Hidden");
+				} else if (enemy->GetTasks().size() > 2) {
+					circuit->LOG("enemy->GetTasks().size() > 2");
+				}
+			}
+			// FIXME: DEBUG
 			continue;
 		}
 		const AIFloat3& ePos = enemy->GetPos();
@@ -294,6 +303,19 @@ void CAttackTask::FindTarget()
 			(notAW && (ePos.y < -SQUARE_SIZE * 5)) ||
 			(enemy->GetUnit()->GetVel().SqLength2D() > speed))
 		{
+			// FIXME: DEBUG
+			if ((enemy->GetCircuitDef() != nullptr) && enemy->GetCircuitDef()->IsRoleComm()) {
+				if (maxPower <= threatMap->GetThreatAt(ePos) * scale) {
+					circuit->LOG("maxPower <= threatMap->GetThreatAt(ePos) * scale");
+				} else if (!terrainManager->CanMoveToPos(area, ePos)) {
+					circuit->LOG("!terrainManager->CanMoveToPos(area, ePos)");
+				} else if (notAW && (ePos.y < -SQUARE_SIZE * 5)) {
+					circuit->LOG("notAW && (ePos.y < -SQUARE_SIZE * 5)");
+				} else if (enemy->GetUnit()->GetVel().SqLength2D() > speed) {
+					circuit->LOG("enemy->GetUnit()->GetVel().SqLength2D() > speed");
+				}
+			}
+			// FIXME: DEBUG
 			continue;
 		}
 
@@ -304,6 +326,34 @@ void CAttackTask::FindTarget()
 				(ePos.y - map->GetElevationAt(ePos.x, ePos.z) > weaponRange) ||
 				enemy->GetUnit()->IsBeingBuilt())
 			{
+				// FIXME: DEBUG
+				if ((enemy->GetCircuitDef() != nullptr) && enemy->GetCircuitDef()->IsRoleComm()) {
+					if ((edef->GetCategory() & canTargetCat) == 0) {
+						circuit->LOG("(edef->GetCategory() & canTargetCat) == 0");
+					} else if ((edef->GetCategory() & noChaseCat) != 0) {
+						char name[1024] = {0};
+						std::string cats, nops;
+						for (int i = 0; i < 32; ++i) {
+							if ((1 << i) & edef->GetCategory()) {
+								circuit->GetGame()->GetCategoryName(1 << i, name, 1000);
+								cats += ", " + std::string(name);
+							}
+							if ((1 << i) & noChaseCat) {
+								circuit->GetGame()->GetCategoryName(1 << i, name, 1000);
+								nops += ", " + std::string(name);
+							}
+						}
+						circuit->LOG("(edef->GetCategory() & noChaseCat) != 0 | %08X | %08X", edef->GetCategory(), noChaseCat);
+						circuit->LOG("%s | %s", cats.c_str(), nops.c_str());
+					} else if (edef->IsAbleToFly() && notAA) {
+						circuit->LOG("edef->IsAbleToFly() && notAA");
+					} else if (ePos.y - map->GetElevationAt(ePos.x, ePos.z) > weaponRange) {
+						circuit->LOG("ePos.y - map->GetElevationAt(ePos.x, ePos.z) > weaponRange");
+					} else if (enemy->GetUnit()->IsBeingBuilt()) {
+						circuit->LOG("enemy->GetUnit()->IsBeingBuilt()");
+					}
+				}
+				// FIXME: DEBUG
 				continue;
 			}
 		}
@@ -312,6 +362,12 @@ void CAttackTask::FindTarget()
 		if (minSqDist > sqOEDist) {
 			minSqDist = sqOEDist;
 			bestTarget = enemy;
+		// FIXME: DEBUG
+		} else {
+			if ((enemy->GetCircuitDef() != nullptr) && enemy->GetCircuitDef()->IsRoleComm()) {
+				circuit->LOG("minSqDist <= sqOEDist");
+			}
+		// FIXME: DEBUG
 		}
 	}
 
